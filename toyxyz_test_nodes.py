@@ -80,7 +80,7 @@ class CaptureWebcam:
         if self.capture == -1:
             self.capture = cv2.VideoCapture(select_webcam)#, cv2.CAP_DSHOW)
 
-        print(f"\033[0;41;43mtik_+++: {time.time() - self.tik}\033[0m")
+        print(f"\033[0;41;43mtik: {time.time() - self.tik}\033[0m")
         self.tik = time.time()
 
         try:
