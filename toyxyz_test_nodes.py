@@ -49,6 +49,8 @@ def save_image(img: torch.Tensor, path, image_format, jpg_quality, png_compress_
     return {"filename": filename, "subfolder": subfolder, "type": "output"}
 
 class CaptureWebcam:
+    tik = time.time()
+    capture = -1
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -74,19 +76,24 @@ class CaptureWebcam:
         self.webcam_index = 0
 
     def load_image(self, select_webcam):
-        capture = cv2.VideoCapture(select_webcam, cv2.CAP_DSHOW)
+        
+        if self.capture == -1:
+            self.capture = cv2.VideoCapture(select_webcam)#, cv2.CAP_DSHOW)
+
+        print(f"\033[0;41;43mtik_+++: {time.time() - self.tik}\033[0m")
+        self.tik = time.time()
 
         try:
             # should be instantly opened
-            if not capture.isOpened():
+            if not self.capture.isOpened():
                 print("Error: Could not open webcam.")
 
                 return
             else:
                 # Capture frame-by-frame
                 # fake read first because the first frame is warmup and sometimes contains artifacts
-                ret, frame = capture.read()
-                ret, frame = capture.read()
+                ret, frame = self.capture.read()
+                ret, frame = self.capture.read()
 
                 image = Image.fromarray(
                     cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
@@ -101,7 +108,8 @@ class CaptureWebcam:
 
             return (image,)
         finally:
-            capture.release()
+            # self.capture.release()
+            pass
 
     @classmethod
     def IS_CHANGED(cls):
